@@ -12,7 +12,8 @@ app.get('/RSS/Bangumi', async (req, res) => {
     await fetch(url)
         .then((response) => response.text())
         .then((data) => {
-            data = data.replace(/http(s)?:\/\/mikanani.me/g, 'https://mikanani.mossia.top');
+            let regex = /https:\/\/mikanani\.me(?!\/0\.1\/)/g;
+            data = data.replace(regex, 'https://mikanani.mossia.top');
 
             res.type('application/xml; charset=utf-8');
             res.send(data);
