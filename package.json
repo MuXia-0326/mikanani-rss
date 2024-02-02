@@ -5,7 +5,7 @@
     "main": "index.js",
     "type": "module",
     "scripts": {
-        "start": "pm2 start index.js --name mikanani-rss",
+        "start": "pm2 start ./src/index.js --name mikanani-rss",
         "stop": "pm2 stop mikanani-rss",
         "restart": "pm2 restart mikanani-rss"
     },

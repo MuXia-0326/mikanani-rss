@@ -10,7 +10,7 @@ let parser = new Parser();
 const app = express();
 
 app.get('/RSS/Bangumi', async (req, res) => {
-    let url = 'https://mikanani.me/RSS/Bangumi?' + new URLSearchParams(req.query).toString();
+    let url = 'https://mikanani.me/RSS/Bangumi?' + new URLSearchParams(req.query.toString()).toString();
     let feed = await parser.parseURL(url);
 
     feed.items.forEach((item) => {
