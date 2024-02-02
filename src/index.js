@@ -3,75 +3,82 @@
  * @Date: 2024/02/02
  */
 import express from 'express';
-import Parser from 'rss-parser';
-import builder from 'xmlbuilder';
 
-let parser = new Parser();
 const app = express();
 
 app.get('/RSS/Bangumi', async (req, res) => {
-    let url = 'https://mikanani.me/RSS/Bangumi?' + new URLSearchParams(req.query.toString()).toString();
-    let feed = await parser.parseURL(url);
+    let url = 'https://mikanani.me/RSS/Bangumi?' + new URLSearchParams(req.query).toString();
 
-    feed.items.forEach((item) => {
-        if (!item.link) {
-            return;
-        }
-        if (!item.enclosure || !item.enclosure.url) {
-            return;
-        }
+    await fetch(url)
+        .then((response) => response.text())
+        .then((data) => {
+            data = data.replace(/http(s)?:\/\/mikanani.me/g, 'https://mikanani.mossia.top');
 
-        item.link = item.link.replace('https://mikanani.me', 'https://mikanani.mossia.top');
+            res.type('application/xml; charset=utf-8');
+            res.send(data);
+        });
 
-        item.enclosure.url = item.enclosure.url.replace('https://mikanani.me', 'https://mikanani.mossia.top');
-    });
+    // let feed = await parser.parseURL(url);
 
-    if (feed.link) {
-        feed.link = feed.link.replace('http://mikanani.me', 'https://mikanani.mossia.top');
-    }
+    // feed.items.forEach((item) => {
+    //     if (!item.link) {
+    //         return;
+    //     }
+    //     if (!item.enclosure || !item.enclosure.url) {
+    //         return;
+    //     }
 
-    let newFeed = builder
-        .create('rss', { version: '1.0', encoding: 'UTF-8' })
-        .att('version', '2.0')
-        .ele('channel')
-        .ele('title', {}, feed.title)
-        .up()
-        .ele('link', {}, feed.link)
-        .up()
-        .ele('description', {}, feed.description)
-        .up();
+    //     item.link = item.link.replace('https://mikanani.me', 'https://mikanani.mossia.top');
 
-    feed.items.forEach((item) => {
-        if (!item.enclosure) {
-            return;
-        }
+    //     item.enclosure.url = item.enclosure.url.replace('https://mikanani.me', 'https://mikanani.mossia.top');
+    // });
 
-        let itemEle = newFeed.ele('item');
-        itemEle
-            .ele('guid', { isPermaLink: 'false' }, item.title)
-            .up()
-            .ele('link', {}, item.link)
-            .up()
-            .ele('title', {}, item.title)
-            .up()
-            .ele('description', {}, item.description)
-            .up()
-            .ele('torrent', { xmlns: 'https://mikanani.me/0.1/' })
-            .ele('link', {}, item.link)
-            .up()
-            .ele('contentLength', {}, item.contentLength)
-            .up()
-            .ele('pubDate', {}, item.pubDate)
-            .up()
-            .up()
-            .ele('enclosure', { type: item.enclosure.type, length: item.enclosure.length, url: item.enclosure.url })
-            .up();
-    });
+    // if (feed.link) {
+    //     feed.link = feed.link.replace('http://mikanani.me', 'https://mikanani.mossia.top');
+    // }
 
-    let xml = newFeed.end({ pretty: true });
+    // let newFeed = builder
+    //     .create('rss', { version: '1.0', encoding: 'UTF-8' })
+    //     .att('version', '2.0')
+    //     .ele('channel')
+    //     .ele('title', {}, feed.title)
+    //     .up()
+    //     .ele('link', {}, feed.link)
+    //     .up()
+    //     .ele('description', {}, feed.description)
+    //     .up();
 
-    res.type('application/xml; charset=utf-8');
-    res.send(xml);
+    // feed.items.forEach((item) => {
+    //     if (!item.enclosure) {
+    //         return;
+    //     }
+
+    //     let itemEle = newFeed.ele('item');
+    //     itemEle
+    //         .ele('guid', { isPermaLink: 'false' }, item.title)
+    //         .up()
+    //         .ele('link', {}, item.link)
+    //         .up()
+    //         .ele('title', {}, item.title)
+    //         .up()
+    //         .ele('description', {}, item.description)
+    //         .up()
+    //         .ele('torrent', { xmlns: 'https://mikanani.me/0.1/' })
+    //         .ele('link', {}, item.link)
+    //         .up()
+    //         .ele('contentLength', {}, item.contentLength)
+    //         .up()
+    //         .ele('pubDate', {}, item.pubDate)
+    //         .up()
+    //         .up()
+    //         .ele('enclosure', { type: item.enclosure.type, length: item.enclosure.length, url: item.enclosure.url })
+    //         .up();
+    // });
+
+    // let xml = newFeed.end({ pretty: true });
+
+    // res.type('application/xml; charset=utf-8');
+    // res.send(xml);
 });
 
 app.listen(9000, () => {

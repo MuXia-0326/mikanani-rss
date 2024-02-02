@@ -5,6 +5,7 @@
     "main": "index.js",
     "type": "module",
     "scripts": {
+        "dev": "nodemon ./src/index.js",
         "start": "pm2 start ./src/index.js --name mikanani-rss",
         "stop": "pm2 stop mikanani-rss",
         "restart": "pm2 restart mikanani-rss"
