@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+        "module": "NodeNext",
+        "noUncheckedIndexedAccess": true,
+        "strict": true,
+        "allowJs": true,
+        "checkJs": true,
+    }
+}
